@@ -11,13 +11,11 @@ services:
       - ./data/database.db:/database.db
       - ./data/config/settings.json:/.filebrowser.json
       - ./shared:/srv
-      # Optional sources that will be linked into /srv/links
       - ./media:/mnt/media
       - ./downloads:/mnt/downloads
+      - ./scripts/create-symlinks.sh:/usr/local/bin/create-symlinks.sh:ro
     command: >
       sh -c '
-      mkdir -p /srv/links &&
-      ln -sfn /mnt/media /srv/links/media &&
-      ln -sfn /mnt/downloads /srv/links/downloads &&
-      filebrowser --database /database.db --config /.filebrowser.json --root /srv
+      sh /usr/local/bin/create-symlinks.sh &&
+      exec filebrowser --database /database.db --config /.filebrowser.json --root /srv
       '
