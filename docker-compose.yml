@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: casaos-filebrowser
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data/database.db:/database.db
+      - ./data/config/settings.json:/.filebrowser.json
+      - ./shared:/srv
+      - ./media:/mnt/media
+      - ./downloads:/mnt/downloads
+      - ./scripts/create-symlinks.sh:/usr/local/bin/create-symlinks.sh:ro
+    command: >
+      sh -c '
+      sh /usr/local/bin/create-symlinks.sh &&
+      exec filebrowser --database /database.db --config /.filebrowser.json --root /srv
+      '
